@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="{{.MapperPath}}">
+    <resultMap type="{{.StructPath}}" id="CustomResultMap">
+{{.CustomResultMap}}
+    </resultMap>
+    <sql id="table_columns">
+{{.TableColumns}}
+    </sql>
+    <sql id="entity_properties">
+{{.EntityProperties}}
+    </sql>
+    <sql id="batch_entity_properties">
+{{.BatchEntityProperties}}
+    </sql>
+
+    <insert id="insert" parameterType="{{.StructPath}}" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO {{.DBName}}{{.TableName}}(
+        <include refid="table_columns"/>
+        )
+        VALUES (
+        <include refid="entity_properties"/>
+        )
+    </insert>
+
+    <insert id="batchInsert" parameterType="java.util.List" useGeneratedKeys="true">
+        INSERT INTO {{.DBName}}{{.TableName}}(
+        <include refid="table_columns"/>
+        )
+        VALUES
+        <foreach item="item" collection="list" separator=",">
+            (
+            <include refid="batch_entity_properties"/>
+            )
+        </foreach>
+    </insert>
+
+    <update id="update" parameterType="{{.StructPath}}">
+        UPDATE {{.DBName}}{{.TableName}}
+        <trim prefix="set" suffixOverrides=",">
+{{.UpdateContent}}
+        </trim>
+        <where>id = #{id}</where>
+    </update>
+
+    <select id="findById" resultMap="CustomResultMap" parameterType="Long">
+        SELECT
+        <include refid="table_columns"/>
+        FROM {{.DBName}}{{.TableName}}
+        WHERE id = #{id}
+    </select>
+    <!-- 使用like用法：columnName like concat('%',#columnName#,'%') -->
+    <!-- 使用instr用法：instr(columnName,'String') -->
+    <!-- 其他自定义SQL -->
+
+    <sql id="findByLimitWhere">
+        <where>
+{{.LimitContent}}
+            <if test="includeNullFieldList != null and includeNullFieldList.size > 0">
+                <foreach collection="includeNullFieldList" item="it" separator="" open="" close="">
+                    AND ISNULL(#{it})
+                </foreach>
+            </if>
+            <if test="excludeNullFieldList != null and excludeNullFieldList.size > 0">
+                <foreach collection="excludeNullFieldList" item="it" separator="" open="" close="">
+                    AND !ISNULL(#{it})
+                </foreach>
+            </if>
+        </where>
+    </sql>
+
+    <select id="findByLimit" resultMap="CustomResultMap" parameterType="map">
+        SELECT
+        <include refid="table_columns"/>
+        FROM {{.DBName}}{{.TableName}}
+        <include refid="findByLimitWhere"/>
+        <if test="sortField != null and sortField != ''">
+            ORDER BY ${sortField}
+        </if>
+        <if test="limit != null and offset != null">
+            LIMIT #{limit} OFFSET #{offset};
+        </if>
+    </select>
+
+    <select id="findByIdList" resultMap="CustomResultMap" parameterType="java.util.List">
+        SELECT
+        <include refid="table_columns"/>
+        FROM {{.DBName}}{{.TableName}}
+        <where>
+            <if test="idList != null">
+                AND id IN
+                <foreach collection="idList" item="it" separator="," open="(" close=")">
+                    #{it}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="findSumByLimit" resultType="Integer" parameterType="map">
+        SELECT COUNT(1)
+        FROM {{.DBName}}{{.TableName}}
+        <include refid="findByLimitWhere"/>
+    </select>
+
+    <update id="updateSortBatch" parameterType="java.util.List">
+        <if test="list != null and list.size > 0">
+            UPDATE {{.DBName}}{{.TableName}}
+            <trim prefix="set" suffixOverrides=",">
+                <trim prefix="sort_value=case" suffix="end,">
+                    <foreach collection="list" item="item" index="index">
+                        WHEN id=#{item.id} then #{item.sortValue}
+                    </foreach>
+                </trim>
+            </trim>
+            WHERE id IN
+            <foreach collection="list" index="index" item="item" separator="," open="(" close=")">
+                #{item.id}
+            </foreach>
+        </if>
+    </update>
+</mapper>

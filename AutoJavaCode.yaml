@@ -1,0 +1,74 @@
+# 目标路径
+Workspace:
+  DirName: admin
+  DBName: user-db
+  TableName: user_info
+  ForceCover: false
+
+  Author: MyName
+  ClassNamePrefix: ""
+  ClassNameSuffix: ""
+  TemplateStruct: AutoJavaCodeTemplateStruct.txt
+  TemplateMapper: AutoJavaCodeTemplateMapper.txt
+  TemplateMybatis: AutoJavaCodeTemplateMybatis.txt
+
+# 目录结构
+DirStruct:
+  - Name: [ admin-service, admin ]
+    DBName: admin-db
+    #Dao目录|包名
+    StructPath: "admin-service/src/main/java/com/howard/startlink/admin/domain/"
+    StructPackage: "com.howard.startlink.admin.domain"
+    #Mapper目录|包名
+    MapperPath: "admin-service/src/main/java/com/howard/startlink/admin/mapper/"
+    MapperPackage: "com.howard.startlink.admin.mapper"
+    #Xml目录
+    XmlPath: "admin-service/src/main/resources/com/howard/startlink/admin/mapper/"
+  - Name: [ user-service, user ]
+    DBName: user-db
+    #Dao目录|包名
+    StructPath: "user-service/src/main/java/com/howard/startlink/user/domain/"
+    StructPackage: "com.howard.startlink.user.mapper"
+    #Mapper目录|包名
+    MapperPath: "user-service/src/main/java/com/howard/startlink/user/mapper/"
+    MapperPackage: "com.howard.startlink.user.mapper"
+    #Xml目录
+    XmlPath: "user-service/src/main/resources/com/howard/startlink/user/mapper/"
+
+# MySql相关
+MySql:
+  HOST: "127.0.0.1"
+  POST: 3306
+  UserName: "root"
+  PassWd: "root"
+  DBName: "user-db"
+  # 是否包含DBName  true:dbname.tableName | false:tableName
+  IsDBNameInMyBatis: true
+  #类型转化<mysqlDataType:JavaDataType>
+  TypeTranslate: {
+    #整数
+    bit: "\r\n    private Boolean %s; //%s\r\n",
+    tinyint: "\r\n    private Boolean %s; //%s\r\n",
+    smallint: "\r\n    private Integer %s; //%s\r\n",
+    mediumint: "\r\n    private Integer %s; //%s\r\n",
+    int: "\r\n    private Integer %s; //%s\r\n",
+    bigint: "\r\n    private Long %s; //%s\r\n",
+
+    #浮点
+    float: "\r\n    private Float %s; //%s\r\n",
+    double: "\r\n    private Double %s; //%s\r\n",
+    decimal: "\r\n    private BigDecimal %s; //%s\r\n",
+
+    #字符串
+    char: "\r\n    private String %s; //%s\r\n",
+    varchar: "\r\n    private String %s; //%s\r\n",
+    tinytext: "\r\n    private String %s; //%s\r\n",
+    text: "\r\n    private String %s; //%s\r\n",
+    mediumtext: "\r\n    private String %s; //%s\r\n",
+    longtext: "\r\n    private String %s; //%s\r\n",
+
+    #日期时间
+    datetime: "\r\n    private Date %s; //%s\r\n",
+    date: "\r\n    private Date %s; //%s\r\n",
+    time: "\r\n    private Date %s; //%s\r\n",
+  }

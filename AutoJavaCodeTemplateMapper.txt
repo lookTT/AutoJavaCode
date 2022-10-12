@@ -1,0 +1,34 @@
+package {{.PackageMapper}};
+
+import {{.PackageStruct}};
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+import java.util.Map;
+
+
+/**
+ * @author {{.AUTHOR}}
+ * @date {{.DATE}}
+ */
+@Mapper
+public interface {{.InterfaceName}} {
+
+    void insert({{.StructName}} entity);
+
+    void batchInsert(List<{{.StructName}}> list);
+
+    void update({{.StructName}} entity);
+
+    {{.StructName}} findById(Long id);
+
+    List<{{.StructName}}> findByLimit(Map<String, Object> map);
+
+    List<{{.StructName}}> findByIdList(@Param("idList") List<Long> idList);
+
+    Integer findSumByLimit(Map<String, Object> map);
+
+    //仅仅批量更新排序索引
+    void updateSortBatch(@Param("list") List<{{.StructName}}> list);
+}
