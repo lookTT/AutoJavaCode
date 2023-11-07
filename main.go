@@ -51,7 +51,7 @@ func initTemplate() {
 	mapperTemplate.DATE = strDate
 }
 
-//初始化数据库连接
+// 初始化数据库连接
 func initDB(config *Model.AutoGenerateJavaCodeConfig) error {
 	urlPath := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", config.MySql.UserName, config.MySql.PassWd, config.MySql.HOST, config.MySql.DBName)
 	var err error
@@ -64,13 +64,13 @@ func initDB(config *Model.AutoGenerateJavaCodeConfig) error {
 	return nil
 }
 
-//小驼峰
+// 小驼峰
 func HandlingStringsLittle(in string) string {
 	tmp := HandlingStringsBig(in)
 	return fmt.Sprintf("%s%s", strings.ToLower(tmp[0:1]), tmp[1:])
 }
 
-//大驼峰
+// 大驼峰
 func HandlingStringsBig(in string) string {
 	if in == "" {
 		return in
@@ -86,7 +86,7 @@ func HandlingStringsBig(in string) string {
 	return out.String()
 }
 
-//处理结构体
+// 处理结构体
 func StructHandler(curTableName string, sFieldInfos []Model.SFieldInfo, size int) {
 	var sFieldInfo Model.SFieldInfo
 	var strLine, DATA string
@@ -121,7 +121,7 @@ func StructHandler(curTableName string, sFieldInfos []Model.SFieldInfo, size int
 	Common.CheckErr(ttTemplate.ExecuteTemplate(f, config.Workspace.TemplateStruct, structTemplate))
 }
 
-//处理mapper
+// 处理mapper
 func MapperHandler(curTableName string) {
 	TableNameCamel := HandlingStringsBig(curTableName)
 	TableNameCamel = fmt.Sprintf("%s%s%s", config.Workspace.ClassNamePrefix, TableNameCamel, config.Workspace.ClassNameSuffix)
@@ -143,7 +143,7 @@ func MapperHandler(curTableName string) {
 	Common.CheckErr(ttTemplate.ExecuteTemplate(f, config.Workspace.TemplateMapper, mapperTemplate))
 }
 
-//处理Mybatis
+// 处理Mybatis
 func MybatisHandler(curDBName string, curTableName string, sFieldInfos []Model.SFieldInfo, size int) {
 	var sFieldInfo Model.SFieldInfo
 	var CustomResultMapBuffer bytes.Buffer
@@ -228,7 +228,7 @@ func MybatisHandler(curDBName string, curTableName string, sFieldInfos []Model.S
 	Common.CheckErr(ttTemplate.ExecuteTemplate(f, config.Workspace.TemplateMybatis, mybatisTemplate))
 }
 
-//处理表
+// 处理表
 func TableProcessing(curDBName string, curTableName string) {
 	if curDBName == "" || curTableName == "" {
 		return
@@ -321,7 +321,9 @@ func main() {
 	defer db.Close()
 
 	//处理数据库
-	TableProcessing(config.Workspace.DBName, config.Workspace.TableName)
+	for i := 0; i < len(config.Workspace.TableName); i++ {
+		TableProcessing(config.Workspace.DBName, config.Workspace.TableName[i])
+	}
 
 	fmt.Println("Completed!!!")
 }

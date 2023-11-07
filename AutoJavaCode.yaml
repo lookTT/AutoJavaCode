@@ -2,7 +2,7 @@
 Workspace:
   DirName: admin
   DBName: user-db
-  TableName: user_info
+  TableName: [ table1, table2, table3 ]
   ForceCover: false
 
   Author: MyName

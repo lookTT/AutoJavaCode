@@ -16,7 +16,7 @@ type AutoGenerateJavaCodeConfig struct {
 type WorkspaceConfig struct {
 	DirName         string
 	DBName          string
-	TableName       string
+	TableName       []string
 	ForceCover      bool
 	Author          string
 	ClassNamePrefix string
