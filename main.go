@@ -5,6 +5,7 @@ import (
 	"AutoGenerateJavaCode/Model"
 	"bytes"
 	"database/sql"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -53,7 +54,7 @@ func initTemplate() {
 
 // 初始化数据库连接
 func initDB(config *Model.AutoGenerateJavaCodeConfig) error {
-	urlPath := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8", config.MySql.UserName, config.MySql.PassWd, config.MySql.HOST, config.MySql.DBName)
+	urlPath := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", config.MySql.UserName, config.MySql.PassWd, config.MySql.HOST, config.MySql.POST, config.MySql.DBName)
 	var err error
 	db, err = sql.Open("mysql", urlPath)
 
@@ -265,6 +266,11 @@ func TableProcessing(curDBName string, curTableName string) {
 		sFieldInfo.FieldType = fieldType.String
 		sFieldInfo.FieldComment = fieldComment.String
 		sFieldInfos = append(sFieldInfos, sFieldInfo)
+	}
+
+	if len(sFieldInfos) <= 0 {
+		Common.CheckErr(errors.New("ERROR!!! len(sFieldInfos) <= 0"))
+		return
 	}
 
 	StructHandler(curTableName, sFieldInfos, len(sFieldInfos))
